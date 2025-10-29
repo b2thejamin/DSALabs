@@ -33,21 +33,21 @@ NOTE: If the unit test is not on, that code will not be compiled!
 */
 
 // Individual unit test toggles
-#define LAB1_DEFAULT_CONSTRUCTOR_DEFAULTS			0
-#define LAB1_DEFAULT_CONSTRUCTOR_WITH_ARGS			0
-#define LAB1_BRACKET_OPERATOR						0
-#define LAB1_SIZE_ACCESSOR							0
-#define LAB1_CAPACITY_ACCESSOR						0
-#define LAB1_RESERVE_EMPTY							0
-#define LAB1_RESERVE_DOUBLE_CAPACITY				0
-#define LAB1_RESERVE_LARGER_CAPACITY				0
-#define LAB1_RESERVE_SMALLER_CAPACITY				0
-#define LAB1_APPEND_NO_RESIZE						0
-#define LAB1_APPEND_RESIZE							0
-#define LAB1_CLEAR									0
-#define LAB1_DESTRUCTOR								0
-#define LAB1_ASSIGNMENT_OPERATOR					0
-#define LAB1_COPY_CONSTRUCTOR						0
+#define LAB1_DEFAULT_CONSTRUCTOR_DEFAULTS			1
+#define LAB1_DEFAULT_CONSTRUCTOR_WITH_ARGS			1
+#define LAB1_BRACKET_OPERATOR						1
+#define LAB1_SIZE_ACCESSOR							1
+#define LAB1_CAPACITY_ACCESSOR						1
+#define LAB1_RESERVE_EMPTY							1
+#define LAB1_RESERVE_DOUBLE_CAPACITY				1
+#define LAB1_RESERVE_LARGER_CAPACITY				1
+#define LAB1_RESERVE_SMALLER_CAPACITY				1
+#define LAB1_APPEND_NO_RESIZE						1
+#define LAB1_APPEND_RESIZE							1
+#define LAB1_CLEAR									1
+#define LAB1_DESTRUCTOR								1
+#define LAB1_ASSIGNMENT_OPERATOR					1
+#define LAB1_COPY_CONSTRUCTOR						1
 
 // Our implementation of a vector (simplified)
 template<typename Type>
@@ -76,57 +76,99 @@ public:
 	// LAB1_DEFAULT_CONSTRUCTOR_WITH_ARGS
 	DynArray(size_t _startingCap = 0) {
 		// TODO: Implement this method according to directions in lab documentation
-
+		if (_startingCap == 0) {
+			mArray = nullptr;
+			mSize = 0;
+			mCapacity = 0;
+		}
+		else {
+			mArray = new Type[_startingCap];
+			mSize = 0;
+			mCapacity = _startingCap;
+		}
 	};
 
 	// LAB1_DESTRUCTOR
 	~DynArray() {
 		// TODO: Implement this method according to directions in lab documentation
-
-
+		delete[] mArray;
 	}
 
 	// LAB1_COPY_CONSTRUCTOR
 	DynArray(const DynArray& _copy) {
 		// TODO: Implement this method according to directions in lab documentation
-
+		mSize = _copy.mSize;
+		mCapacity = _copy.mCapacity;
+		if (_copy.mArray == nullptr) {
+			mArray = nullptr;
+		}
+		else {
+			mArray = new Type[mCapacity];
+			for (size_t i = 0; i < mSize; i++) {
+				mArray[i] = _copy.mArray[i];
+			}
+		}
 	}
 
 	// LAB1_ASSIGNMENT_OPERATOR
 	DynArray& operator=(const DynArray& _assign) {
 		// TODO: Implement this method according to directions in lab documentation
-
+		if (this != &_assign) {
+			Clear();
+			mSize = _assign.mSize;
+			mCapacity = _assign.mCapacity;
+			if (_assign.mArray == nullptr) {
+				mArray = nullptr;
+			}
+			else {
+				mArray = new Type[mCapacity];
+				for (size_t i = 0; i < mSize; i++) {
+					mArray[i] = _assign.mArray[i];
+				}
+			}
+		}
+		return *this;
 	}
 
 	// LAB1_CLEAR
 	void Clear() {
 		// TODO: Implement this method according to directions in lab documentation
-
+		delete[] mArray;
+		mArray = nullptr;
+		mSize = 0;
+		mCapacity = 0;
 	}
 
 	// LAB1_BRACKET_OPERATOR
 	Type& operator[](size_t _index) {
 		// TODO: Implement this method according to directions in lab documentation
-
+		return mArray[_index];
 	}
 
 	// LAB1_SIZE_ACCESSOR
 	size_t Size() const {
 		// TODO: Implement this method according to directions in lab documentation
-
+		return mSize;
 	}
 
 	// LAB1_CAPACITY_ACCESSOR
 	size_t Capacity() const {
 		// TODO: Implement this method according to directions in lab documentation
-
+		return mCapacity;
 	}
 
 	// LAB1_APPEND_NO_RESIZE
 	// LAB1_APPEND_RESIZE
 	void Append(const Type& _data) {
 		// TODO: Implement this method according to directions in lab documentation
-
+		if (mSize < mCapacity) {
+			mArray[mSize] = _data;
+		}
+		else {
+			Reserve();
+		}
+		mArray[mSize] = _data;
+		mSize++;
 	}
 
 	// LAB1_RESERVE_EMPTY
@@ -135,6 +177,27 @@ public:
 	// LAB1_RESERVE_SMALLER_CAPACITY
 	void Reserve(size_t _newCapacity = 0) {
 		// TODO: Implement this method according to directions in lab documentation
-
+		if (_newCapacity == 0) {
+			if (mCapacity == 0) {
+				mCapacity = 1;
+			}
+			else {
+				mCapacity *= 2;
+			}
+		}
+		else {
+			if (_newCapacity > mCapacity) {
+				mCapacity = _newCapacity;
+			}
+			else {
+				return;
+			}
+		}
+		Type* temp = new Type[mCapacity];
+		for (size_t i = 0; i < mSize; i++) {
+			temp[i] = mArray[i];
+		}
+		delete[] mArray;
+		mArray = temp;
 	}
 };
